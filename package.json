@@ -1,6 +1,6 @@
 {
   "name": "juejin-books-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "掘金小册导出工具",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

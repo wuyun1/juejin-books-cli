@@ -332,7 +332,7 @@ ${content}
                 };
             }))
         };
-        await page.screenshot({ path: 'example.png' });
+        // await page.screenshot({ path: 'example.png' });
         await browser.close();
 
             console.log(`登录成功!`);
