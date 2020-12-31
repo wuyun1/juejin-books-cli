@@ -19,14 +19,18 @@
   "scripts": {
     "test": "ts-node src/cli.ts",
     "prepublishOnly": "father-build && conventional-changelog -p angular -i CHANGELOG.md -s",
-    "build": "father-build"
+    "build": "father-build",
+    "install": "node install.js"
   },
   "devDependencies": {
     "@babel/core": "7.8.4",
+    "@types/fs-extra": "^9.0.6",
+    "@types/isomorphic-fetch": "^0.0.35",
     "@types/jest": "^25.1.1",
     "@types/lodash.isequal": "^4.5.5",
     "@types/memoize-one": "^5.1.2",
     "@types/node": "^13.7.6",
+    "@types/puppeteer-core": "^5.4.0",
     "@types/warning": "^3.0.0",
     "conventional-changelog-cli": "^2.1.1",
     "father-build": "^1.17.2",
@@ -34,7 +38,13 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
+    "@types/inquirer": "^7.3.1",
     "commander": "^6.2.1",
-    "minimist": "^1.2.5"
+    "fs-extra": "^9.0.1",
+    "inquirer": "^7.3.3",
+    "isomorphic-fetch": "^3.0.0",
+    "lodash": "^4.17.20",
+    "minimist": "^1.2.5",
+    "puppeteer-core": "^5.5.0"
   }
 }

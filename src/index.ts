@@ -6,11 +6,11 @@ export default async ({
   args,
 }: {
   cwd?: string;
-  args?: ParsedArgs;
+  args?: string[];
 } = {}) => {
     let app = new App({
       cwd: cwd || process.cwd(),
-      args: args || require('minimist')(process.argv.slice(2)),
+      args: args || process.argv.slice(2),
     });
-    app.initialize();
+    await app.initialize();
 };
