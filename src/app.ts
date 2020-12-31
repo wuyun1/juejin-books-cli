@@ -2,12 +2,12 @@ import { ChildProcess, spawn, SpawnOptions } from 'child_process';
 import commander, { Command } from 'commander';
 import puppeteer from 'puppeteer-core';
 import  inquirer, { Answers, Question } from 'inquirer';
-import lodash from 'lodash';
+// import lodash from 'lodash';
 import fetch from 'isomorphic-fetch';
 import * as os from 'os';
 import { join } from 'path';
 import { existsSync, ensureDir, readFileSync, realpathSync, unlinkSync, writeFileSync } from 'fs-extra';
-import { delay } from './utils/common';
+// import { delay } from './utils/common';
 
 export class App {
 
@@ -17,6 +17,7 @@ export class App {
     private cacheDir: string;
     private cacheTokenFilePath: string;
     private token: string | null = null;
+    private sessionid: string | null = null;
     private args: string[];
 
     constructor(
@@ -95,7 +96,9 @@ export class App {
 
     private setCache = async (data: any) => {
         if (data === null) {
-            unlinkSync(this.cacheTokenFilePath);
+            if(existsSync(this.cacheTokenFilePath)){
+                unlinkSync(this.cacheTokenFilePath);
+            }
             return;
         }
         writeFileSync(this.cacheTokenFilePath, JSON.stringify({
@@ -114,7 +117,7 @@ export class App {
             "headers": {
                 "accept": "*/*",
                 "content-type": "application/json",
-                "cookie": `passport_csrf_token=${this.token}`,
+                "cookie": `passport_csrf_token=${this.token}; sessionid=${this.sessionid}`,
                 ...options.headers
             },
             "referrer": "https://juejin.cn/",
@@ -129,18 +132,18 @@ export class App {
     }
 
     private exportBook = async (bookUrl: string, command: Command) => {
-        console.log('正在导出掘金小册...', bookUrl);
-
         let userInfo: any;
 
         if (!this.token && !command.disableCache) {
             userInfo = (await this.getCache());
             this.token = userInfo.token;
+            this.sessionid = userInfo.sessionid;
         }
 
         if (!this.token) {
             userInfo = await this.doLogin(command);
             this.token = userInfo.token;
+            this.sessionid = userInfo.sessionid;
         }
         if (!this.token) {
             return;
@@ -269,8 +272,9 @@ ${content}
 
         let data: any = {};
         await this.installChrome();
+        console.log('正在跳转到浏览器, 请在浏览器完成登录...');
         const browser = await puppeteer.launch({ headless: false });
-        const page = await browser.newPage();
+        const page: puppeteer.Page = ((await browser.pages())[0] || await browser.newPage());
         await page.goto('https://juejin.cn/');
 
         await page.waitForSelector('.login-button');
@@ -280,7 +284,6 @@ ${content}
         await page.click(switchLoginTypeSelector);
         await page.waitForSelector('input[name=loginPhoneOrEmail]');
         if(command.user) {
-            console.log(command.user);
             await page.type('input[name=loginPhoneOrEmail]', command.user.split())
         }
         if(command.pass) {
@@ -288,11 +291,9 @@ ${content}
         }
         if(command.user && command.pass) {
             await page.click('#juejin > div.global-component-box > div.auth-modal-box > form > div.panel > button');
-            // await page.waitForSelector('#verify-points');
-            // await delay(50);
-            // await require('./utils/drag').drag({page});
         }
         try {
+
             let myResolve: any = null;
             const eventListener = async (event: any) => {
                 if (event.url().includes('api.juejin.cn/user_api/v1/user/get')) {
@@ -302,7 +303,6 @@ ${content}
                 }
             };
             const userInfo: any = await Promise.race([
-                // delay(300000),
                 new Promise((resolve) => {
                     myResolve = resolve;
                     page.addListener('response', eventListener);
@@ -315,23 +315,53 @@ ${content}
                 ...data,
                 ...userInfo,
             };
+
+            const sessionInfo: any = {};
+            const pageCookies = (await page.cookies());
+
+            for (const cookieItem of pageCookies) {
+                if(cookieItem.name === 'passport_csrf_token') {
+                    sessionInfo.token = cookieItem.value;
+                    continue;
+                } else if(cookieItem.name === 'sessionid') {
+                    sessionInfo.sessionid = cookieItem.value;
+                    continue;
+                }
+            }
+
+            if (!sessionInfo) {
+                throw new Error('请求超时');
+            }
+            data = {
+                ...data,
+                ...sessionInfo,
+            };
+           
         } catch (e) {
             console.error(e);
             process.exit(1);
         }
-        data = {
-            ...data,
-            ...(await page.evaluate(() => {
-                const tokenReg = /.*passport_csrf_token=([^;]+)(;.*|$)/;
-                const token = document.cookie.replace(
-                    tokenReg,
-                    '$1',
-                );
-                return {
-                    token,
-                };
-            }))
-        };
+        // data = {
+        //     ...(await page.evaluate(():any => {
+        //         let token = '';
+        //         let sessionid = '';
+        //         const tokenReg = /.*passport_csrf_token=([^;]+)(;.*|$)/;
+        //         let regResult = tokenReg.exec(document.cookie);
+        //         if(regResult) {
+        //             token = regResult[1];
+        //         }
+        //         const sessionidReg = /.*sessionid=([^;]+)(;.*|$)/;
+        //         regResult = sessionidReg.exec(document.cookie);
+        //         if(regResult) {
+        //             sessionid = regResult[1];
+        //         }
+        //         return {
+        //             token,
+        //             sessionid,
+        //         };
+        //     })),
+        //     ...data,
+        // };
         // await page.screenshot({ path: 'example.png' });
         await browser.close();
 
