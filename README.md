@@ -9,7 +9,10 @@
 npm i -g juejin-books-cli
 
 # 导出掘金小册
-juejin-books-cli export https://juejin.cn/book/6844733783166418958 --token [你的掘金登录token]
+juejin-books-cli export
+
+# 导出指定掘金小册
+juejin-books-cli export https://juejin.cn/book/6844733783166418958
 
 ```
 
@@ -24,6 +27,6 @@ cd juejin-books-cli
 
 yarn install
 
-yarn run test export https://juejin.cn/book/6844733783166418958 --token 你的掘金登录token
+yarn run test export https://juejin.cn/book/6844733783166418958
 
 ```
