@@ -12,7 +12,8 @@
     "src",
     "bin",
     "templates",
-    "install.js"
+    "install.js",
+    "!.umi"
   ],
   "bin": {
     "juejin-books-cli": "bin/juejin-books-cli.js"
