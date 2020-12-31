@@ -1,7 +1,7 @@
 {
   "name": "juejin-books-cli",
   "version": "1.0.0",
-  "description": "掘金手册导出工具",
+  "description": "掘金小册导出工具",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "repository": "https://github.com/wuyun1/juejin-books-cli",
