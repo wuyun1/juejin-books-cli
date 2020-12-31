@@ -1,5 +1,4 @@
-import { ParsedArgs } from 'minimist';
-import { App } from './app';
+import { App } from './cli-app';
 
 export default async ({
   cwd,

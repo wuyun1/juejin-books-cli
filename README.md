@@ -16,6 +16,17 @@ juejin-books-cli export https://juejin.cn/book/6844733783166418958
 
 ```
 
+### 预览导出的小册
+
+
+```bash
+# 安装 md 文档预览工具
+npm i -g dumi
+
+dumi dev
+
+```
+
 
 ## 开发调试
 
@@ -27,6 +38,6 @@ cd juejin-books-cli
 
 yarn install
 
-yarn run test export https://juejin.cn/book/6844733783166418958
+yarn run test
 
 ```
