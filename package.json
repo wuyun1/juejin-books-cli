@@ -11,7 +11,8 @@
     "lib",
     "src",
     "bin",
-    "templates"
+    "templates",
+    "install.js"
   ],
   "bin": {
     "juejin-books-cli": "bin/juejin-books-cli.js"
