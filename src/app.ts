@@ -45,7 +45,7 @@ export class App {
             .action(this.write2);
 
         this.program.command('help [command]')
-            // .description('usage of a specific command')
+            .description('usage of a specific command')
             .action(this.help);
 
         commander.parse(process.argv);
@@ -65,7 +65,6 @@ export class App {
     private exportBook = async (bootUrl: string, command: Command) => {
         console.log('正在导出掘金小册...',bootUrl, command.token);
     }
-
 
     private write2 = async (inputStr: string = '', command: Command) => {
         console.log(inputStr, command.message, command.message2);
