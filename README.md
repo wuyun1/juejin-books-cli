@@ -17,7 +17,7 @@ juejin-books-cli export https://juejin.cn/book/6844733783166418958 --token [你�
 ## 开发调试
 
 ```bash
-# 安装工具
+
 git clone https://github.com/wuyun1/juejin-books-cli.git
 
 cd juejin-books-cli
