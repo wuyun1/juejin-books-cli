@@ -1,0 +1,9 @@
+{
+  "name": "juejin-books-cli",
+  "version": "1.0.0",
+  "description": "掘金手册导出工具",
+  "main": "index.js",
+  "repository": "https://github.com/wuyun1/juejin-books-cli",
+  "author": "wuyun1",
+  "license": "MIT"
+}
