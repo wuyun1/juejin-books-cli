@@ -72,7 +72,6 @@ export class App {
 
     private help = async (cmdName: string = '', commandOptions: Command) => {
         if (!cmdName) {
-            console.log(this);
             this.program.outputHelp();
             return;
         }
