@@ -1,4 +1,5 @@
 import { ParsedArgs } from 'minimist';
+import { App } from './app';
 
 export default async ({
   cwd,
@@ -7,11 +8,9 @@ export default async ({
   cwd?: string;
   args?: ParsedArgs;
 } = {}) => {
-
-    // const path = require('path');
-    // const args = process.argv.slice(2);
-    const argv = args || require('minimist')(process.argv.slice(2));
-    
-    console.log(argv);
-  
+    let app = new App({
+      cwd: cwd || process.cwd(),
+      args: args || require('minimist')(process.argv.slice(2)),
+    });
+    app.initialize();
 };

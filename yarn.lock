@@ -2087,6 +2087,11 @@ commander@^2.20.0:
   resolved "http://nexus.saas.hand-china.com/repository/hzero-npm-group/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
   integrity sha1-/UhehMA+tIgcIHIrpIA16FMa6zM=
 
+commander@^6.2.1:
+  version "6.2.1"
+  resolved "http://nexus.saas.hand-china.com/repository/hzero-npm-group/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
+  integrity sha1-B5LraC37wyWZm7K4T93duhEKxzw=
+
 commondir@^1.0.1:
   version "1.0.1"
   resolved "http://nexus.saas.hand-china.com/repository/hzero-npm-group/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
