@@ -10,10 +10,14 @@ import { existsSync, ensureDir, emptyDir, readFileSync, realpathSync, unlinkSync
 
 const _html2md = require('html-to-md');
 
-export const convertArrayBufferToFile = async (buffer: ArrayBuffer, imgSaveDir: string):Promise<string> => {
+export const convertBlobToFile = async (blob: Blob, imgSaveDir: string):Promise<string> => {
+    const type = blob.type;
+    let ext = type.split('/')[1] || 'png';
+    ext = ext.split('+')[0];
+    const buffer = await blob.arrayBuffer();
     const _imgSaveDir = join(imgSaveDir, `_assets`);
     await ensureDir(_imgSaveDir);
-    const fileName = join(_imgSaveDir, `img_${Date.now()}.png`);
+    const fileName = join(_imgSaveDir, `img_${Date.now()}.${ext}`);
     await writeFile(fileName, Buffer.from(buffer));
     return `./_assets/${basename(fileName)}`;
 }
@@ -102,7 +106,7 @@ export class App {
 
         for (let i = 1; i <= countId; i++) {
             const imgSrc = srcMap.get(i);
-            const filePath = await convertArrayBufferToFile(await fetch(imgSrc, {
+            const filePath = await convertBlobToFile(await fetch(imgSrc, {
                 "headers": {
                     "accept": "*/*",
                     "content-type": "application/json",
@@ -112,7 +116,7 @@ export class App {
                 "method": "GET",
                 "mode": "cors",
             })
-                .then(d => (d.arrayBuffer())), imgSaveDir);
+                .then(d => (d.blob())), imgSaveDir);
 
             ret = ret.replace(`__PLACEHOLDER_${i}__`, filePath || imgSrc);
         }
@@ -259,11 +263,10 @@ export class App {
         await ensureDir(saveDir);
 
         const indexContent = `---
+title: '${bookInfo.data.booklet.base_info.title}'
 group:
   title: '${bookInfo.data.booklet.base_info.title}'
 ---
-
-# ${bookInfo.data.booklet.base_info.title}
 
 > ${bookInfo.data.booklet.base_info.summary}
 
