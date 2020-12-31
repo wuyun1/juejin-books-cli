@@ -38,6 +38,10 @@ cd juejin-books-cli
 
 yarn install
 
+# 测试导出小册
 yarn run test
+
+# 阅读文档
+npx dumi dev
 
 ```
