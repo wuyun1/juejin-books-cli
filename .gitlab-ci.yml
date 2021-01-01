@@ -1,0 +1,23 @@
+
+stages:
+ - docker_build
+
+docker_build:
+ image: registry.cn-hangzhou.aliyuncs.com/hzero-cli/cifront:0.0.1
+ stage: docker_build
+ script:
+   - yarn install --ignore-engines
+   - export PUBLIC_PATH=/juejin-books-cli/
+   - yarn run docs:build
+   - mkdir ~/.ssh
+   - cat ./.cicd/id_rsa_hzero-cli > ~/.ssh/id_rsa_hzero-cli && chmod 600 ~/.ssh/id_rsa_hzero-cli
+   - cat ./.cicd/hzero-cli.ssh.config > ~/.ssh/config && chmod 600 ~/.ssh/config
+   - git config --global user.email "gitlab-runner@hand-china.com"
+   - git config --global user.name "gitlab-runner"
+   - cd dist && git init && git checkout -B gh-pages
+   - cp ./index.html ./404.html
+   - git add . && git commit -m"publish"
+   - git remote add gitee-origin git@gitee.com:hzero-cli/juejin-books-cli.git
+   - git push --set-upstream gitee-origin gh-pages -f
+ only:
+   - master
