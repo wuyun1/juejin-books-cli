@@ -326,11 +326,21 @@ ${await this.html2md(content, saveDir)}
         const page: puppeteer.Page = ((await browser.pages())[0] || await browser.newPage());
         await page.goto('https://juejin.cn/');
 
+        try{
+            await page.waitForSelector('.user-growth-lead .icon-close', {timeout: 2000});
+            await page.click('.user-growth-lead .icon-close');
+        }catch(e) {
+            console.info(e);
+        }
+
         await page.waitForSelector('.login-button');
         await page.click('.login-button');
+
+
         const switchLoginTypeSelector = '#juejin > div.global-component-box > div.auth-modal-box > form > div.panel > div.prompt-box > span';
         await page.waitForSelector(switchLoginTypeSelector);
         await page.click(switchLoginTypeSelector);
+
         await page.waitForSelector('input[name=loginPhoneOrEmail]');
         if (command.user) {
             await page.type('input[name=loginPhoneOrEmail]', command.user.split())
@@ -345,7 +355,7 @@ ${await this.html2md(content, saveDir)}
 
             let myResolve: any = null;
             const eventListener = async (event: any) => {
-                if (event.url().includes('api.juejin.cn/user_api/v1/user/get')) {
+                if ( event.status() === 200 && event.url().includes('api.juejin.cn/user_api/v1/user')) { // event.method ===  'get' &&
                     const responseData: any = await event.json();
                     myResolve && myResolve(responseData.data);
                     page.removeListener('response', eventListener);
@@ -357,10 +367,11 @@ ${await this.html2md(content, saveDir)}
                     page.addListener('response', eventListener);
                 })
             ]);
-            if (!userInfo) {
-                throw new Error('请求超时');
-            }
+            // if (!userInfo) {
+            //     throw new Error('请求超时');
+            // }
             data = {
+                user_id: userInfo?.profile_id,
                 ...data,
                 ...userInfo,
             };
